@@ -1,0 +1,6 @@
+# dependencies
+node_modules/
+
+# testing
+/MongoDBRefresher
+/NodeExpressRefresher
