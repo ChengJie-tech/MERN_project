@@ -6,6 +6,7 @@ import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 import {
   VALIDATOR_MINLENGTH,
@@ -33,6 +34,10 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
@@ -42,17 +47,13 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId,
-        }),
-        { "Content-Type": "application/json" }
-      );
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("image", formState.inputs.image.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", auth.userId);
+      await sendRequest("http://localhost:5000/api/places", "POST", formData);
       // Redirect the user to a different page
       history.push("/");
     } catch (error) {}
@@ -80,6 +81,12 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
           errorText="Please enter a valid description(at least 5 characters)."
           onInput={inputHandler}
+        />
+        <ImageUpload
+          center
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image."
         />
         <Input
           id="address"
