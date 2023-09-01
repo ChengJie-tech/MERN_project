@@ -1,6 +1,7 @@
 // const { v4: uuid } = require('uuid');
-const { validationResult } = require('express-validator');
+const fs = require('fs');
 const mongoose = require('mongoose');
+const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../utils/location');
@@ -46,6 +47,7 @@ const getPlacesByUserId = async (req, res, next) => {
 };
 
 const createPlace = async (req, res, next) => {
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return next(new HttpError('Invalid inputs passed, please check your data.', 422));
@@ -64,7 +66,7 @@ const createPlace = async (req, res, next) => {
         title,
         description,
         location: coordinates,
-        image: 'https://patchwiki.biligame.com/images/ys/7/70/iv7dviodlgfi8upe9spcic3227ru3yi.png',
+        image: req.file.path,
         address,
         creator
     });
@@ -148,6 +150,8 @@ const deletePlace = async (req, res, next) => {
         ));
     }
 
+    const imagePath = place.image;
+
     try {
         const sess = await mongoose.startSession();
         sess.startTransaction();
@@ -160,6 +164,10 @@ const deletePlace = async (req, res, next) => {
             'Something went wrong, could not delete place', 500
         ));
     }
+
+    fs.unlink(imagePath, err => {
+        console.log(err);
+    });
 
     res.json({ message: 'Deleting...' });
 };

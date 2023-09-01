@@ -39,7 +39,7 @@ const signUp = async (req, res, next) => {
     const newUser = new User({
         name,
         email,
-        image: 'https://patchwiki.biligame.com/images/ys/e/e1/n4zqro7l3mez5ut84ihjfnok8epci7x.png',
+        image: req.file.path,
         password,
         places: []
     });
