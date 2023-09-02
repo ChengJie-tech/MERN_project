@@ -50,7 +50,7 @@ const Auth = (props) => {
           }),
           { "Content-Type": "application/json" }
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
         // Redirect the user to a different page
       } catch (error) {}
     } else {
@@ -65,7 +65,7 @@ const Auth = (props) => {
           "POST",
           formData
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
         // Redirect the user to a different page
       } catch (error) {}
     }
